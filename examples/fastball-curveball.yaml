@@ -1,0 +1,35 @@
+configurations:
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -1.3137142794229684 foot
+    - 55.5 foot
+    - 7.081481232389338 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.9659258262890683
+    - 0
+    - -0.25881904510252074
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -1.3137142794229684 foot
+    - 55.5 foot
+    - 7.081481232389338 foot
+    speed: 80 mph
+    spin: 2000 rpm
+    spin_direction:
+    - 10
+    - -1
+    - 5
+  simulation:
+    time step: 1 ms

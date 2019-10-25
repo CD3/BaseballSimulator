@@ -1,0 +1,324 @@
+configurations:
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -0.6666666666666666 foot
+    - 55.5 foot
+    - 7.166666666666667 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 1.0
+    - 0
+    - -0.0
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -0.8845560235358121 foot
+    - 55.5 foot
+    - 7.157153411896031 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.9961946980917455
+    - 0
+    - -0.08715574274765817
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -1.1007871108339924 foot
+    - 55.5 foot
+    - 7.128686049197187 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.984807753012208
+    - 0
+    - -0.17364817766693033
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -1.3137142794229684 foot
+    - 55.5 foot
+    - 7.081481232389338 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.9659258262890683
+    - 0
+    - -0.25881904510252074
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -1.5217170249808385 foot
+    - 55.5 foot
+    - 7.015898218631438 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.9396926207859084
+    - 0
+    - -0.3420201433256687
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -1.7232123210184151 foot
+    - 55.5 foot
+    - 6.932436134258292 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.9063077870366499
+    - 0
+    - -0.42261826174069944
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -1.9166666666666665 foot
+    - 55.5 foot
+    - 6.831730176127763 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.8660254037844387
+    - 0
+    - -0.49999999999999994
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -2.1006077575442816 foot
+    - 55.5 foot
+    - 6.714546777389146 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.8191520442889918
+    - 0
+    - -0.573576436351046
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -2.2736356908830144 foot
+    - 55.5 foot
+    - 6.581777774464111 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.766044443118978
+    - 0
+    - -0.6427876096865393
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -2.434433619633035 foot
+    - 55.5 foot
+    - 6.434433619633036 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.7071067811865476
+    - 0
+    - -0.7071067811865475
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -2.5817777744641113 foot
+    - 55.5 foot
+    - 6.273635690883015 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.6427876096865394
+    - 0
+    - -0.766044443118978
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -2.714546777389146 foot
+    - 55.5 foot
+    - 6.100607757544282 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.5735764363510462
+    - 0
+    - -0.8191520442889918
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -2.831730176127763 foot
+    - 55.5 foot
+    - 5.916666666666667 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.5000000000000001
+    - 0
+    - -0.8660254037844386
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -2.932436134258291 foot
+    - 55.5 foot
+    - 5.723212321018416 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.42261826174069944
+    - 0
+    - -0.9063077870366499
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -3.015898218631437 foot
+    - 55.5 foot
+    - 5.521717024980839 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.3420201433256688
+    - 0
+    - -0.9396926207859083
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -3.0814812323893372 foot
+    - 55.5 foot
+    - 5.313714279422969 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.25881904510252074
+    - 0
+    - -0.9659258262890683
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -3.1286860491971864 foot
+    - 55.5 foot
+    - 5.100787110833993 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.17364817766693041
+    - 0
+    - -0.984807753012208
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -3.1571534118960303 foot
+    - 55.5 foot
+    - 4.884556023535812 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 0.08715574274765814
+    - 0
+    - -0.9961946980917455
+  simulation:
+    time step: 1 ms
+- launch:
+    direction:
+    - 1
+    - -55
+    - 1
+    position:
+    - -3.1666666666666665 foot
+    - 55.5 foot
+    - 4.666666666666667 foot
+    speed: 95 mph
+    spin: 2200 rpm
+    spin_direction:
+    - 6.123233995736766e-17
+    - 0
+    - -1.0
+  simulation:
+    time step: 1 ms
