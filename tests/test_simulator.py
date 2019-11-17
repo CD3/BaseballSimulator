@@ -1,6 +1,9 @@
 
 
 from BaseballSimulator import *
+from BaseballSimulator.Plotter import *
+import plotly.graph_objs as go
+import pytest
 
 class Approx(object):
   def __init__(self,val):
@@ -24,6 +27,7 @@ def test_works():
 
 
 
+
 def test_launch_configuration():
 
   launch_config = LaunchConfiguration()
@@ -33,9 +37,9 @@ def test_launch_configuration():
   launch_config.translate_position( Q_(5.5,'ft')*zhat )
 
   x = launch_config.get_position_tensor()
-  assert x[0] == Q_(-1.5,'ft').to("m").magnitude
-  assert x[1] == Q_(55,'ft').to("m").magnitude
-  assert x[2] == Q_(5.5,'ft').to("m").magnitude
+  assert Approx(x[0]) == Q_(-1.5,'ft').to("m").magnitude
+  assert Approx(x[1]) == Q_(55,'ft').to("m").magnitude
+  assert Approx(x[2]) == Q_(5.5,'ft').to("m").magnitude
 
   launch_config.speed = Q_(100,'mph')
   launch_config.point_velocity_at_position( Q_(5,'ft')*zhat )
@@ -79,8 +83,8 @@ def test_launch_configuration_rotations():
   assert Approx( launch_config.angular_velocity.magnitude[2] ) == 0
 
 
-  launch_config.deflect_velocity( Rx(Q_(45,'degree')) )
-  launch_config.deflect_spin( Rx(Q_(45,'degree')) )
+  launch_config.deflect_direction( Rx(Q_(45,'degree')) )
+  launch_config.deflect_spin_direction( Rx(Q_(45,'degree')) )
 
 
   assert Approx( Norm(launch_config.velocity.magnitude) ) == 100
@@ -96,8 +100,8 @@ def test_launch_configuration_rotations():
 
 
 
-  launch_config.deflect_velocity( Ry(Q_(90,'degree')) )
-  launch_config.deflect_spin( Ry(Q_(90,'degree')) )
+  launch_config.deflect_direction( Ry(Q_(90,'degree')) )
+  launch_config.deflect_spin_direction( Ry(Q_(90,'degree')) )
 
 
   assert Approx( Norm(launch_config.velocity.magnitude) ) == 100
@@ -272,7 +276,6 @@ def test_magnus_only():
   # since the magnus force cannot change the kinetic energy of the ball,
   # we will get uniform circular motion. the radius is
   R = m / (beta * omega)
-  print(R)
 
 
   # motion in the x-y plane
@@ -426,5 +429,129 @@ def test_magnus_only_linear_model():
 
 
 
+def test_pitcher_throw():
+  pitcher = Pitcher()
+  pitcher.characteristics['release position'] = Q_(-2,'ft')*xhat + Q_(55,'ft')*yhat + Q_(5.5,'ft')*zhat
+  pitcher.characteristics['pitches'] = { 1 : { 'velocity' : Q_(98,'mph'),
+                     'spin' : Q_(2500,'rpm'),
+                     'spin direction' : torch.tensor([-1,0,0],dtype=ScalarType) }
+  }
+  pitcher.aim_model = AimModels.SimpleLinear()
+
+  launch_config = pitcher.configure_throw_from_deflection(1,Q_(100,'percent'),Q_(10,'degree'),Q_(0,'degree'))
+
+  assert Approx(launch_config.position.magnitude[0]) == -2
+  assert Approx(launch_config.position.magnitude[1]) == 55
+  assert Approx(launch_config.position.magnitude[2]) == 5.5
+
+  assert Approx(Norm(launch_config.velocity.magnitude)) == 98
+  assert Approx(launch_config.velocity.magnitude[0]) == 0
+  assert Approx(launch_config.velocity.magnitude[1]) == -98*numpy.cos(Q_(10,'degree')).to("").magnitude
+  assert Approx(launch_config.velocity.magnitude[2]) ==  98*numpy.sin(Q_(10,'degree')).to("").magnitude
+
+  assert Approx(Norm(launch_config.angular_velocity.magnitude)) == 2500
+  assert Approx(launch_config.angular_velocity.magnitude[0]) == -2500
+  assert Approx(launch_config.angular_velocity.magnitude[1]) == 0
+  assert Approx(launch_config.angular_velocity.magnitude[2]) == 0
+
+  launch_config = pitcher.configure_throw_from_deflection(1,Q_(100,'percent'),Q_(0,'degree'),Q_(10,'degree'))
+
+  assert Approx(launch_config.position.magnitude[0]) == -2
+  assert Approx(launch_config.position.magnitude[1]) == 55
+  assert Approx(launch_config.position.magnitude[2]) == 5.5
+
+  assert Approx(Norm(launch_config.velocity.magnitude)) == 98
+  assert Approx(launch_config.velocity.magnitude[0]) == 98*numpy.sin(Q_(10,'degree')).to("").magnitude
+  assert Approx(launch_config.velocity.magnitude[1]) == -98*numpy.cos(Q_(10,'degree')).to("").magnitude
+  assert Approx(launch_config.velocity.magnitude[2]) == 0
+
+  assert Approx(Norm(launch_config.angular_velocity.magnitude)) == 2500
+  assert Approx(launch_config.angular_velocity.magnitude[0]) == -2500*numpy.cos(Q_(10,'degree')).to("").magnitude
+  assert Approx(launch_config.angular_velocity.magnitude[1]) == -2500*numpy.sin(Q_(10,'degree')).to("").magnitude
+  assert Approx(launch_config.angular_velocity.magnitude[2]) == 0
+
+
+def test_aim_model_base():
+  model = AimModels.Base()
+
+  assert model.in_features == 4
+
+  fv = model.make_feature_vector( pitch_type=1, effort=0.9, verticle_location=10., horizontal_location=20. )
+  assert fv[0] == 1
+  assert Approx(fv[1]) == 0.9
+  assert Approx(fv[2]) == 10
+  assert Approx(fv[3]) == 20
+
+  
+  with pytest.raises(Exception):
+    fv = model.make_feature_vector( effort=0.9, verticle_location=10., horizontal_location=20. )
+
+
+  model = AimModels.Base(order=2)
+
+  assert model.in_features == 7
+
+  fv = model.make_feature_vector( pitch_type=1, effort=0.9, verticle_location=10., horizontal_location=20. )
+  assert fv[0] == 1
+  assert Approx(fv[1]) == 0.9
+  assert Approx(fv[2]) == 10
+  assert Approx(fv[3]) == 20
+  assert Approx(fv[4]) == 0.9**2
+  assert Approx(fv[5]) == 10**2
+  assert Approx(fv[6]) == 20**2
+
+
+
+
+def test_pitcher_train():
+  sim = Simulation()
+  model_file = pathlib.Path(f"adam-model-{adam.id()}.pl")
+  if model_file.is_file():
+    adam.aim_model.load(str(model_file))
+  losses = adam.train(sim,epochs=1000000,num_throws=100000)
+  adam.aim_model.save(str(model_file))
+
+
+  fig = go.Figure(data=go.Scatter(x=list(range(len(losses))),y=losses,mode='markers') )
+  fig.show()
+
+
+
+  configs = list()
+  aim_locations = list()
+  for x in numpy.arange( -20, 21,5 ):
+    for z in numpy.arange( 12,70, 12 ):
+      aim_x = Q_(x,'inch')
+      aim_z = Q_(z,'inch')
+      config = adam.configure_throw( 1, Q_(100,'percent'), aim_z, aim_x)
+      aim_locations.append( [aim_x,aim_z] )
+      configs.append(config)
+
+  def compute_location(config):
+    trajectory = sim.run(config, terminate_function=lambda x: x[-1][2] < 0, record_all=False)
+    act_x = Q_(trajectory[0][1],'m')
+    act_z = Q_(trajectory[0][3],'m')
+    return [act_x,act_z]
+
+  pool = Pool()
+  locations = pool.map( compute_location, configs)
+
+  txs = [ r[0].to("in").magnitude for r in aim_locations ]
+  tzs = [ r[1].to("in").magnitude for r in aim_locations ]
+  axs = [ r[0].to("in").magnitude for r in locations ]
+  azs = [ r[1].to("in").magnitude for r in locations ]
+
+
+  fig = go.Figure(data=[go.Scatter(x=txs,y=tzs,mode='markers'),go.Scatter(x=axs,y=azs,mode='markers')])
+  fig.show()
+
+  total_loss = 0
+  dl = 0
+  for i in range(len(locations)):
+    print(aim_locations[i][0].to("in"),aim_locations[i][1].to("in"),"|",locations[i][0].to("in"),locations[i][1].to("in"))
+    dl += ((aim_locations[i][0]-locations[i][0])**2 + (aim_locations[i][1]-locations[i][1])**2)**0.5
+  dl = dl / len(locations)
+  print(dl)
+  
 
 

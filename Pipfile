@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 jedi = "*"
 pytest = "*"
+pylint = "*"
 
 [packages]
 pint = "*"
@@ -18,6 +19,9 @@ torch = "==1.3.0"
 matplotlib = "*"
 pathos = "*"
 dill = "*"
+tqdm = "*"
+ray = "*"
+psutil = "*"
 
 [requires]
 python_version = "3.6"

@@ -4,6 +4,8 @@ from Plotter import *
 from pathos.multiprocessing import ProcessingPool as Pool
 import yaml
 
+# import ray
+# ray.init()
 
 
 
@@ -59,6 +61,7 @@ def load_configs_from_file(filename):
 
 configs = load_configs_from_file(args.config_file)
 
+# @ray.remote
 def run_configuration(sim_and_launch):
   def terminate(record):
     # if the ball is below ground, bounce it
@@ -84,6 +87,7 @@ if args.serial:
 else:
   processes = Pool()
   trajectories = processes.map(run_configuration, configs)
+  # trajectories = ray.get( [run_configuration.remote(c) for c in configs] )
 
 
 if args.write_to_file:

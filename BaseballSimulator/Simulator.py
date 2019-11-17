@@ -17,19 +17,22 @@ from scipy.spatial.transform import Rotation
 ureg = pint.UnitRegistry()
 ureg.define('percent = 0.01 rad')
 Q_ = ureg.Quantity
+pint.set_application_registry(ureg)
+
+ScalarType = torch.float
 
 def Rx(theta):
-  return torch.from_numpy( Rotation.from_rotvec([theta.to('radian').magnitude,0,0]).as_dcm() )
+  return torch.from_numpy( Rotation.from_rotvec(torch.tensor([theta.to('radian').magnitude,0,0])).as_dcm() ).type(ScalarType)
 def Ry(theta):
-  return torch.from_numpy( Rotation.from_rotvec([0,theta.to('radian').magnitude,0]).as_dcm() )
+  return torch.from_numpy( Rotation.from_rotvec(torch.tensor([0,theta.to('radian').magnitude,0])).as_dcm() ).type(ScalarType)
 def Rz(theta):
-  return torch.from_numpy( Rotation.from_rotvec([0,0,theta.to('radian').magnitude]).as_dcm() )
+  return torch.from_numpy( Rotation.from_rotvec(torch.tensor([0,0,theta.to('radian').magnitude])).as_dcm() ).type(ScalarType)
 
 Norm = numpy.linalg.norm
 
-xhat = torch.tensor([1,0,0],dtype=numpy.float)
-yhat = torch.tensor([0,1,0],dtype=numpy.float)
-zhat = torch.tensor([0,0,1],dtype=numpy.float)
+xhat = torch.tensor([1,0,0],dtype=ScalarType)
+yhat = torch.tensor([0,1,0],dtype=ScalarType)
+zhat = torch.tensor([0,0,1],dtype=ScalarType)
 
 def num(quant):
   '''
@@ -52,7 +55,7 @@ class Simulation:
     self.config.gravitational_acceleration = Q_(9.8,'m/s**2')
     self.config.time_step = Q_(1,'ms')
     self.config.time_step_growth_rate = Q_(1,'')
-    self.config.error_tolerance = Q_(0.01,'')
+    self.config.error_tolerance = Q_(1,'percent')
     self.config.auto_converge_time_step = True
 
   def configure(self, config):
@@ -116,7 +119,7 @@ class Simulation:
 
       dsdt[0] = 1                         # dt/dt = 1
       dsdt[1:4] = state[4:7]              # dx/dt = v
-      dsdt[7:10] = torch.tensor([0,0,0])  # dw/dt = 0 ... for now
+      dsdt[7:10] = torch.tensor([0,0,0],dtype=state.dtype)  # dw/dt = 0 ... for now
 
 
       # TODO: add wind
@@ -191,6 +194,8 @@ class Simulation:
 
       if record_all:
         record.append( state.clone().detach() )
+      else:
+        record[0] = state.clone().detach()
 
       dt *= self.config.time_step_growth_rate.to("").magnitude
 
@@ -214,16 +219,16 @@ class LaunchConfiguration:
           # a list of quantities.
           # turn it into a tensor quantity.
           units = v[0].units
-          return units*torch.tensor([ q.to(units).magnitude for q in v ],dtype=torch.float)
+          return units*torch.tensor([ q.to(units).magnitude for q in v ],dtype=ScalarType)
         if isinstance(v[0],str):
           # a list of strings. treat as a list of quantities.
           # turn it into a tensor quantity.
           units = Q_(v[0]).units
-          return units*torch.tensor([ Q_(q).to(units).magnitude for q in v ],dtype=torch.float)
+          return units*torch.tensor([ Q_(q).to(units).magnitude for q in v ],dtype=ScalarType)
         if isinstance(v[0],numbers.Number):
           # a list of numbers.
           # turn it into a tensor.
-          return torch.tensor(v,dtype=torch.float)
+          return torch.tensor(v,dtype=ScalarType)
       return v
     config_keys_used = []
 
@@ -284,24 +289,24 @@ class LaunchConfiguration:
     self.direction = r - self.position
     self.direction = self.direction.magnitude
 
-  def deflect_velocity(self, R):
+  def deflect_direction(self, R):
     self.direction = torch.mv(R,self.direction)
 
   def point_spin_at_position(self,r):
     self.spin_direction = r - self.position
     self.spin_direction = self.spin_direction.magnitude
 
-  def deflect_spin(self, R):
+  def deflect_spin_direction(self, R):
     self.spin_direction = torch.mv(R,self.spin_direction)
 
   def get_position_tensor(self,unit=ureg.meter):
-    x = torch.tensor( [x.to(unit).magnitude for x in self.position],dtype=torch.float )
+    x = torch.tensor( [x.to(unit).magnitude for x in self.position],dtype=ScalarType )
     return x
   def get_velocity_tensor(self,unit=(ureg.meter/ureg.second)):
-    v = torch.tensor( [v.to(unit).magnitude for v in self.velocity],dtype=torch.float )
+    v = torch.tensor( [v.to(unit).magnitude for v in self.velocity],dtype=ScalarType )
     return v
   def get_spin_tensor(self,unit=ureg.radian/ureg.second):
-    w = torch.tensor( [w.to(unit).magnitude for w in self.angular_velocity],dtype=torch.float )
+    w = torch.tensor( [w.to(unit).magnitude for w in self.angular_velocity],dtype=ScalarType )
     return w
 
 
