@@ -1,41 +1,44 @@
+pitcher: &ptchr
+  name: adam
+  aim_model: ./data/models/adam-model-8c9bddf417b66faf0f2cf459e4321a751a8c2a59.pl
+simulation: &sim
+  time step: 1 ms
+  error tolerance : 0.10 dimensionless
+
 configurations:
-  - simulation:
-      time step: 1 ms
-      error tolerance : 0.10 dimensionless
-      missing : none
-    launch:
-      position : ['-2.5 ft', '55 ft', '5.5 ft']
-      speed : '100 mph'
-      direction : [3, -55, 0]
-      spin : '2000 rpm'
-      spin_direction : [-1,0,0]
-  - simulation:
-      time step: 1 s
-      error tolerance : 0.001 dimensionless
-      missing : none
-    launch:
-      position : ['-2.5 ft', '55 ft', '5.5 ft']
-      speed : '100 mph'
-      direction : [3, -55, 0]
-      spin : '2000 rpm'
-      spin_direction : [-1,0,0]
-  - simulation:
-      time step: 1 ms
-      error tolerance : 0.1 dimensionless
-    launch:
-      position : ['-2.5 ft', '55 ft', '5.5 ft']
-      speed : '100 mph'
-      direction : [3, -55, 0]
-      spin : '2000 rpm'
-      spin_direction : [1,0,-1]
-  - simulation:
-      time step: 1 s
-      error tolerance : 0.001 dimensionless
-    launch:
-      position : ['-2.5 ft', '55 ft', '5.5 ft']
-      speed : '100 mph'
-      direction : [3, -55, 0]
-      spin : '2000 rpm'
-      spin_direction : [1,0,-1]
-
-
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 1
+      effort: 100 percent
+      location : [-8.5 in, 20 in]
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 1
+      effort: 100 percent
+      location : [8.5 in, 20 in]
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 1
+      effort: 90 percent
+      location : [8.5 in, 20 in]
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 1
+      effort: 100 percent
+      location : [-8.5 in, 48 in]
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 1
+      effort: 100 percent
+      location : [8.5 in, 48 in]
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 1
+      effort: 100 percent
+      location : [0 in, 32 in]

@@ -1,145 +1,117 @@
-from Simulator import *
-from Plotter import *
+from .Simulator import *
+from .Plotter import *
+from . import Pitchers
 
 from pathos.multiprocessing import ProcessingPool as Pool
 import yaml
+import sys
+import pprint
+import importlib
+import copy
+
+this_script = pathlib.Path(__file__).resolve()
 
 # import ray
 # ray.init()
 
-
-
 from argparse import ArgumentParser
 
-parser = ArgumentParser(description="A baseball pitch simulator.")
+def main(argv):
 
-parser.add_argument("config_file",
-                    action="store",
-                    help="Configuration file." )
+  parser = ArgumentParser(description="A baseball pitch simulator.")
 
-parser.add_argument("-w", "--write-to-file",
-                    dest="write_to_file",
-                    action="store_true",
-                    help="Write pitch trajectories to file." )
-parser.add_argument("-o", "--output-file",
-                    dest="output_file",
-                    action="store",
-                    default="PitchSim-Trajectory",
-                    help="Output file basename. Multiple simulations will be written to seprate files with index appended." )
-parser.add_argument("-f", "--output-format",
-                    dest="output_format",
-                    action="store",
-                    default="txt",
-                    help="Output file format." )
-parser.add_argument("-p", "--display-plots",
-                    dest="display_plots",
-                    action="store_true",
-                    help="Plot pitch trajectories." )
-parser.add_argument("-s", "--serial",
-                    dest="serial",
-                    action="store_true",
-                    help="Run simulations in series rather than parallel." )
+  parser.add_argument("config_file",
+                      action="store",
+                      help="Configuration file." )
+  parser.add_argument("-l", "--list-pitchers",
+                      action="store_true",
+                      help="List the name of all built-in pitcher available for use." )
+  parser.add_argument("-o", "--output-config-file",
+                      action="store",
+                      default="launch-sim-autoconfig.yaml",
+                      help="Name of file to write launch-sim.py configuration file to." )
+  parser.add_argument("-r", "--run-launch-sim",
+                      action="store_true",
+                      help="Run launch-sim.py after generating configuration." )
 
 
-args = parser.parse_args()
+  args = parser.parse_args(argv)
 
+  if args.list_pitchers:
+    pitchers = [ p for p in dir(Pitchers) if isinstance( getattr(Pitchers,p), Pitchers.Pitcher ) ]
+    print("Available pitchers:")
+    for p in pitchers:
+      print("\t",p)
+    sys.exit(0)
 
-def load_configs_from_file(filename):
-  configs = []
-  with open(filename,'r') as f:
-    fconf = yaml.safe_load(f)
+  # load pitch-sim config
+  config_file = pathlib.Path(args.config_file).resolve()
+  with config_file.open() as f:
+    pconf = yaml.safe_load(f)
 
-  for config in fconf.get('configurations',[]):
-    c = [Simulation(),LaunchConfiguration()]
-    c[0].configure( config.get('simulation',{}) )
-    c[1].configure( config.get('launch',{}) )
-    configs.append(c)
+  # generate launch-sim config
+  pitchers = dict()
+  lconf = {'configurations':[]}
+  for conf in pconf.get('configurations',[]):
+    c = dict()
+    c['simulation'] = conf.get('simulation',dict())
+    c['launch'] = dict()
 
-  return configs
+    # get or create pitcher
+    pitcher = None
+    name = conf.get('pitcher',dict()).get('name',None)
+    aim_model = conf.get('pitcher',dict()).get('name',None)
+    if name is not None and aim_model is not None:
+      if name in pitchers and aim_model in pitchers[name]:
+        # pitcher has already been created
+        pitcher = pitchers[name][aim_model]
+        print("REUSE")
+      else:
+        # pitcher has not already been created
+        # either the pitcher with given name has not been created,
+        # or a pitcher with the same name but a different aim model has been created.
+        # in either case, we want a new copy of the pitcher with the given name.
+        pitcher = copy.deepcopy(getattr( Pitchers, conf['pitcher']['name'] ))
 
+        # add name to cache if it is new
+        if name not in pitchers:
+          pitchers[name] = dict()
 
+        # set aim model
+        file = pathlib.Path(conf['pitcher']['aim_model'])
+        if not file.is_file():
+          raise Exception(f"Could not find '{file}'.")
+        pitcher.aim_model.load( str(file) )
 
-configs = load_configs_from_file(args.config_file)
+        # add pitcher to cache
+        pitchers[name][aim_model] = pitcher
 
-# @ray.remote
-def run_configuration(sim_and_launch):
-  def terminate(record):
-    # if the ball is below ground, bounce it
-    if record[-1][3] < 0:
-      record[-1][3] *= -1
-      record[-1][6] *= -1
-
-    # terminate when ball reaches back of plate
-    if record[-1][2] < 0:
-      return True
-
-    # make sure we don't get stuck in an infinite loop
-    if record[-1][0] > 10:
-      return True
     
+    type = conf['pitch']['type']
+    effort = conf['pitch']['effort']
+    location_x = conf['pitch']['location'][0]
+    location_z = conf['pitch']['location'][1]
+    sconf = pitcher.configure_throw(type,Q_(effort),Q_(location_z),Q_(location_x))
 
-    return False
+    c['launch']['position'] = [str(x) for x in sconf.position]
+    c['launch']['speed'] = str(sconf.speed)
+    c['launch']['direction'] = [float(x) for x in sconf.direction]
+    c['launch']['spin'] = str(sconf.spin)
+    c['launch']['spin_direction'] = [float(x) for x in sconf.spin_direction]
 
-  return sim_and_launch[0].run( sim_and_launch[1], terminate )
-
-if args.serial:
-  trajectories = [ run_configuration(c) for c in configs ]
-else:
-  processes = Pool()
-  trajectories = processes.map(run_configuration, configs)
-  # trajectories = ray.get( [run_configuration.remote(c) for c in configs] )
+    lconf['configurations'].append(c)
 
 
-if args.write_to_file:
-  for i,trajectory in enumerate(trajectories):
-    if args.output_format == 'txt':
-      with open(f"{args.output_file}-{i}.txt", 'w') as f:
-        f.write("#t x y z vx vy vz wx wy wz")
-        f.write("\n")
-        for state in trajectory:
-          line = " ".join( [str(elem.item()) for elem in state] )
-          f.write(line)
-          f.write("\n")
-    elif args.output_format == 'pt':
-      torch.save( torch.stack(trajectory), f"{args.output_file}-{i}.pt")
 
-    else:
-      raise Exception(f"Error: Unrecognized output file format ({args.output_format})")
+  output_config_file = pathlib.Path(args.output_config_file).resolve()
+  output_config_file.write_text(yaml.dump(lconf))
 
-if args.display_plots:
-  plotter = Trajectory3DPlot()
-  # add stikezone graphic
-  W = Q_(17,'inch').to("m")
-  H = Q_(2.5,'ft').to("m")
-  b = Q_(1.5,'ft').to("m")
-  home_plate_corners = list()
-  home_plate_corners.append( 0*yhat )
-  home_plate_corners.append( W/2*yhat + W/2*xhat )
-  home_plate_corners.append( W*yhat + W/2*xhat )
-  home_plate_corners.append( W*yhat - W/2*xhat )
-  home_plate_corners.append( W/2*yhat - W/2*xhat )
-  home_plate_corners.append( 0*yhat )
-  home_plate_plot = go.Scatter3d(
-      x = [ r[0] for r in home_plate_corners ],
-      y = [ r[1] for r in home_plate_corners ],
-      z = [ r[2] for r in home_plate_corners ],
-      mode='lines',
-      line=dict(color='rgb(255, 0, 0)'),
-      name='Home Plate'
-  ) 
-  stike_zone_corners = list()
-  stike_zone_corners.append( W*yhat + W/2*xhat + b*zhat )
-  stike_zone_corners.append( W*yhat + W/2*xhat + (b+H)*zhat )
-  stike_zone_corners.append( W*yhat - W/2*xhat + (b+H)*zhat )
-  stike_zone_corners.append( W*yhat - W/2*xhat + b*zhat )
-  stike_zone_corners.append( W*yhat + W/2*xhat + b*zhat )
-  stike_zone_plot = go.Scatter3d(
-      x = [ r[0] for r in stike_zone_corners ],
-      y = [ r[1] for r in stike_zone_corners ],
-      z = [ r[2] for r in stike_zone_corners ],
-      mode='lines',
-      line=dict(color='rgb(255, 0, 0)'),
-      name='Strike Zone'
-  ) 
-  plotter.plot( trajectories, [home_plate_plot, stike_zone_plot] )
+  if args.run_launch_sim:
+    launch_sim = importlib.import_module(".launch-sim",__package__)
+    launch_sim.main([str(output_config_file),"-p"])
+
+
+
+if __name__ == "__main__":
+  main(sys.argv[1:])
 

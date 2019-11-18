@@ -1,0 +1,41 @@
+configurations:
+  - simulation:
+      time step: 1 ms
+      error tolerance : 0.10 dimensionless
+      missing : none
+    launch:
+      position : ['-2.5 ft', '55 ft', '5.5 ft']
+      speed : '100 mph'
+      direction : [3, -55, 0]
+      spin : '2000 rpm'
+      spin_direction : [-1,0,0]
+  - simulation:
+      time step: 1 s
+      error tolerance : 0.001 dimensionless
+      missing : none
+    launch:
+      position : ['-2.5 ft', '55 ft', '5.5 ft']
+      speed : '100 mph'
+      direction : [3, -55, 0]
+      spin : '2000 rpm'
+      spin_direction : [-1,0,0]
+  - simulation:
+      time step: 1 ms
+      error tolerance : 0.1 dimensionless
+    launch:
+      position : ['-2.5 ft', '55 ft', '5.5 ft']
+      speed : '100 mph'
+      direction : [3, -55, 0]
+      spin : '2000 rpm'
+      spin_direction : [1,0,-1]
+  - simulation:
+      time step: 1 s
+      error tolerance : 0.001 dimensionless
+    launch:
+      position : ['-2.5 ft', '55 ft', '5.5 ft']
+      speed : '100 mph'
+      direction : [3, -55, 0]
+      spin : '2000 rpm'
+      spin_direction : [1,0,-1]
+
+
