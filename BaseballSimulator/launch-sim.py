@@ -1,5 +1,6 @@
 from .Simulator import *
 from .Plotter import *
+from .pdict import *
 
 from pathos.multiprocessing import ProcessingPool as Pool
 import yaml

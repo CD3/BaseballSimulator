@@ -138,7 +138,7 @@ class Pitcher:
 
 
 
-  def train(self,simulation, epochs=100, num_throws = 1000):
+  def train(self,simulation, epochs=100, num_throws = 1000, training_file = None, learning_rate=1e-4):
     '''
     Train the pitcher's aim model for a given simulation.
     '''
@@ -156,8 +156,11 @@ class Pitcher:
       raise Exception("Error: Pitcher's aim model has not been initialized. Cannot train.")
 
     N = num_throws
-    training_file = pathlib.Path(f'pitcher-training-data-{num_throws}-{self.id()}.pl').resolve()
-    model_file = pathlib.Path(f'pitcher-aim_model-{self.id()}.pl').resolve()
+    if training_file is None:
+      training_file = f'pitcher-training-data-{num_throws}-{self.id()}.pl'
+    if isinstance(training_file,str):
+      training_file = pathlib.Path(training_file).resolve()
+
 
     if training_file.is_file():
       print(f"Traning data file found ({str(training_file)}). Loading training data from file.")
@@ -239,11 +242,12 @@ class Pitcher:
 
     
     # optimizer = torch.optim.Adam( self.aim_model.parameters(), lr=1e-2 )
-    optimizer = torch.optim.SGD( self.aim_model.parameters(), lr=1e-4 )
+    optimizer = torch.optim.SGD( self.aim_model.parameters(), lr=learning_rate )
     loss_func = torch.nn.MSELoss()
 
 
     losses = list()
+    print(f"Traning model:")
     for i in tqdm.tqdm(range(epochs)):
       optimizer.zero_grad()
       pred = self.aim_model(model_inputs)
@@ -268,6 +272,20 @@ adam.characteristics['pitches'] = { 1 : { 'velocity' : Q_(98,'mph'),
                    'spin direction' : torch.tensor([-2,0.1,-1],dtype=ScalarType) }
 }
 adam.aim_model = AimModels.SimpleLinear(pitch_types=list(adam.characteristics['pitches'].keys()),order=1)
+
+
+
+brian = Pitcher()
+brian.characteristics['release position'] = Q_(-2,'ft')*xhat + Q_(55,'ft')*yhat + Q_(5.5,'ft')*zhat
+brian.characteristics['pitches'] = { 
+    1 : { 'velocity' : Q_(96,'mph'),
+                   'spin' : Q_(2400,'rpm'),
+                   'spin direction' : torch.tensor([-2,0.1,-1],dtype=ScalarType) },
+    2 : { 'velocity' : Q_(82,'mph'),
+                   'spin' : Q_(2200,'rpm'),
+                   'spin direction' : torch.tensor([1,-0.1,0.2],dtype=ScalarType) }
+}
+brian.aim_model = AimModels.SimpleLinear(pitch_types=list(brian.characteristics['pitches'].keys()),order=1)
 
 
 

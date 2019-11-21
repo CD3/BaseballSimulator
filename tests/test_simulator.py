@@ -508,7 +508,7 @@ def test_pitcher_train():
   model_file = pathlib.Path(f"adam-model-{adam.id()}.pl")
   if model_file.is_file():
     adam.aim_model.load(str(model_file))
-  losses = adam.train(sim,epochs=1000000,num_throws=100000)
+  losses = adam.train(sim,epochs=10,num_throws=10)
   adam.aim_model.save(str(model_file))
 
 

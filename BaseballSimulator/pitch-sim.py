@@ -1,6 +1,7 @@
 from .Simulator import *
 from .Plotter import *
 from . import Pitchers
+from .pdict import *
 
 from pathos.multiprocessing import ProcessingPool as Pool
 import yaml
@@ -15,6 +16,46 @@ this_script = pathlib.Path(__file__).resolve()
 # ray.init()
 
 from argparse import ArgumentParser
+
+
+pitchers_cache = pdict()
+
+
+def construct_pitcher(config):
+  '''
+  Constructs and returns an instance of Pitcher given a configuration. Each unique pitcher configuration is cached,
+  so multiple instances of the same configuration will use the same object.
+  '''
+  config = pdict(config)
+
+  pitcher = None
+  name = config.get('name',None)
+  aim_model = config.get('aim_model',None)
+  if name is not None and aim_model is not None:
+    if name in pitchers_cache and aim_model in pitchers_cache[name]:
+      # pitcher has already been created
+      pitcher = pitchers_cache[name][aim_model]
+    else:
+      # pitcher has not already been created
+      # either the pitcher with given name has not been created,
+      # or a pitcher with the same name but a different aim model has been created.
+      # in either case, we want a new copy of the pitcher with the given name.
+      pitcher = copy.deepcopy(getattr( Pitchers, name ))
+
+      # add name to cache if it is new
+      if name not in pitchers_cache:
+        pitchers_cache[name] = dict()
+
+      # set aim model
+      file = pathlib.Path(aim_model)
+      if not file.is_file():
+        raise Exception(f"Could not find '{file}'.")
+      pitcher.aim_model.load( str(file) )
+
+      # add pitcher to cache
+      pitchers_cache[name][aim_model] = pitcher
+
+  return pitcher
 
 def main(argv):
 
@@ -50,41 +91,15 @@ def main(argv):
     pconf = yaml.safe_load(f)
 
   # generate launch-sim config
-  pitchers = dict()
   lconf = {'configurations':[]}
   for conf in pconf.get('configurations',[]):
+    conf = pdict(conf)
     c = dict()
-    c['simulation'] = conf.get('simulation',dict())
+    c['simulation'] = conf.get('simulation',pdict()).dict()
     c['launch'] = dict()
 
     # get or create pitcher
-    pitcher = None
-    name = conf.get('pitcher',dict()).get('name',None)
-    aim_model = conf.get('pitcher',dict()).get('name',None)
-    if name is not None and aim_model is not None:
-      if name in pitchers and aim_model in pitchers[name]:
-        # pitcher has already been created
-        pitcher = pitchers[name][aim_model]
-        print("REUSE")
-      else:
-        # pitcher has not already been created
-        # either the pitcher with given name has not been created,
-        # or a pitcher with the same name but a different aim model has been created.
-        # in either case, we want a new copy of the pitcher with the given name.
-        pitcher = copy.deepcopy(getattr( Pitchers, conf['pitcher']['name'] ))
-
-        # add name to cache if it is new
-        if name not in pitchers:
-          pitchers[name] = dict()
-
-        # set aim model
-        file = pathlib.Path(conf['pitcher']['aim_model'])
-        if not file.is_file():
-          raise Exception(f"Could not find '{file}'.")
-        pitcher.aim_model.load( str(file) )
-
-        # add pitcher to cache
-        pitchers[name][aim_model] = pitcher
+    pitcher = construct_pitcher(conf['pitcher'])
 
     
     type = conf['pitch']['type']
