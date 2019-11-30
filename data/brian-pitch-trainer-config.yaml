@@ -1,0 +1,8 @@
+pitcher:
+  name: brian
+training:
+  training data file: "./data/training/brian-training-data-{num}-{id}.pl"
+  input model file: "./data/models/{name}-model-{id}.pl"
+  output model file: "./data/models/{name}-model-{id}.pl"
+  number epochs: 10000
+  number trials: 1000000

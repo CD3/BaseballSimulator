@@ -1,0 +1,68 @@
+pitcher: &ptchr
+  name: brian
+  aim_model: ./data/models/brian-model-26fa4e4ddc7984eb5f1e0056983e48aaff5df790.pl
+simulation: &sim
+  time step: 1 ms
+  error tolerance : 0.10 dimensionless
+
+configurations:
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 1
+      effort: 100 percent
+      location : [-8.5 in, 20 in]
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 1
+      effort: 100 percent
+      location : [8.5 in, 20 in]
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 1
+      effort: 100 percent
+      location : [-8.5 in, 48 in]
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 1
+      effort: 100 percent
+      location : [8.5 in, 48 in]
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 1
+      effort: 100 percent
+      location : [0 in, 32 in]
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 2
+      effort: 100 percent
+      location : [-8.5 in, 20 in]
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 2
+      effort: 100 percent
+      location : [8.5 in, 20 in]
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 2
+      effort: 100 percent
+      location : [-8.5 in, 48 in]
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 2
+      effort: 100 percent
+      location : [8.5 in, 48 in]
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 2
+      effort: 100 percent
+      location : [0 in, 32 in]

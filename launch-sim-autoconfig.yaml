@@ -1,99 +1,181 @@
 configurations:
 - launch:
     direction:
-    - 0.038435447961091995
-    - -0.9978046417236328
-    - -0.053931064903736115
+    - 0.03783409297466278
+    - -0.9979013800621033
+    - -0.05254966393113136
     position:
     - -2.0 foot
     - 55.0 foot
     - 5.5 foot
-    speed: 98.0 mph
-    spin: 2500 revolutions_per_minute
+    speed: 96.0 mph
+    spin: 2400 revolutions_per_minute
     spin_direction:
-    - -2.004437208175659
-    - 0.07668862491846085
-    - -0.9931515455245972
-  simulation: &id001
+    - -2.004338502883911
+    - 0.07652918994426727
+    - -0.9933633208274841
+  simulation:
     error tolerance: 0.10 dimensionless
     time step: 1 ms
 - launch:
     direction:
-    - 0.06387942284345627
-    - -0.9964978694915771
-    - -0.05395642668008804
+    - 0.06328868120908737
+    - -0.9966108202934265
+    - -0.05254935473203659
     position:
     - -2.0 foot
     - 55.0 foot
     - 5.5 foot
-    speed: 98.0 mph
-    spin: 2500 revolutions_per_minute
+    speed: 96.0 mph
+    spin: 2400 revolutions_per_minute
     spin_direction:
-    - -2.0057430267333984
-    - 0.025550469756126404
-    - -0.993147611618042
-  simulation: *id001
+    - -2.005638599395752
+    - 0.025352314114570618
+    - -0.9933633804321289
+  simulation:
+    error tolerance: 0.10 dimensionless
+    time step: 1 ms
 - launch:
     direction:
-    - 0.06379784643650055
-    - -0.9971152544021606
-    - -0.041121840476989746
+    - 0.03789623826742172
+    - -0.9992220401763916
+    - -0.010917195118963718
     position:
     - -2.0 foot
     - 55.0 foot
     - 5.5 foot
-    speed: 88.2 mph
-    spin: 2500 revolutions_per_minute
+    speed: 96.0 mph
+    spin: 2400 revolutions_per_minute
     spin_direction:
-    - -2.0049242973327637
-    - 0.013045743107795715
-    - -0.9950419664382935
-  simulation: *id001
+    - -2.0027666091918945
+    - 0.03503455966711044
+    - -0.9988486766815186
+  simulation:
+    error tolerance: 0.10 dimensionless
+    time step: 1 ms
 - launch:
     direction:
-    - 0.03847549855709076
-    - -0.9991885423660278
-    - -0.011912197805941105
+    - 0.0633845180273056
+    - -0.9979294538497925
+    - -0.010916887782514095
     position:
     - -2.0 foot
     - 55.0 foot
     - 5.5 foot
-    speed: 98.0 mph
-    spin: 2500 revolutions_per_minute
+    speed: 96.0 mph
+    spin: 2400 revolutions_per_minute
     spin_direction:
-    - -2.0028247833251953
-    - 0.03486577421426773
-    - -0.9987378716468811
-  simulation: *id001
+    - -2.0030083656311035
+    - -0.016088709235191345
+    - -0.9988487362861633
+  simulation:
+    error tolerance: 0.10 dimensionless
+    time step: 1 ms
 - launch:
     direction:
-    - 0.06395483016967773
-    - -0.9978814125061035
-    - -0.011937596835196018
+    - 0.05061011388897896
+    - -0.9981150031089783
+    - -0.034713976085186005
     position:
     - -2.0 foot
     - 55.0 foot
     - 5.5 foot
-    speed: 98.0 mph
-    spin: 2500 revolutions_per_minute
+    speed: 96.0 mph
+    spin: 2400 revolutions_per_minute
     spin_direction:
-    - -2.0030641555786133
-    - -0.016217462718486786
-    - -0.9987350106239319
-  simulation: *id001
+    - -2.0042529106140137
+    - 0.03319966793060303
+    - -0.9959259033203125
+  simulation:
+    error tolerance: 0.10 dimensionless
+    time step: 1 ms
 - launch:
     direction:
-    - 0.05119743570685387
-    - -0.9980415105819702
-    - -0.03594301640987396
+    - 0.017354344949126244
+    - -0.9994645118713379
+    - 0.027739107608795166
     position:
     - -2.0 foot
     - 55.0 foot
     - 5.5 foot
-    speed: 98.0 mph
-    spin: 2500 revolutions_per_minute
+    speed: 82.0 mph
+    spin: 2200 revolutions_per_minute
     spin_direction:
-    - -2.0043349266052246
-    - 0.03323889523744583
-    - -0.9957595467567444
-  simulation: *id001
+    - 1.0014883279800415
+    - -0.07703843712806702
+    - 0.20269694924354553
+  simulation:
+    error tolerance: 0.10 dimensionless
+    time step: 1 ms
+- launch:
+    direction:
+    - 0.04285549744963646
+    - -0.9986961483955383
+    - 0.027739405632019043
+    position:
+    - -2.0 foot
+    - 55.0 foot
+    - 5.5 foot
+    speed: 82.0 mph
+    spin: 2200 revolutions_per_minute
+    spin_direction:
+    - 1.0031282901763916
+    - -0.05145483464002609
+    - 0.20269697904586792
+  simulation:
+    error tolerance: 0.10 dimensionless
+    time step: 1 ms
+- launch:
+    direction:
+    - 0.017331266775727272
+    - -0.9974423050880432
+    - 0.0693434402346611
+    position:
+    - -2.0 foot
+    - 55.0 foot
+    - 5.5 foot
+    speed: 82.0 mph
+    spin: 2200 revolutions_per_minute
+    spin_direction:
+    - 1.0013412237167358
+    - -0.06850454956293106
+    - 0.20645292103290558
+  simulation:
+    error tolerance: 0.10 dimensionless
+    time step: 1 ms
+- launch:
+    direction:
+    - 0.04278082028031349
+    - -0.9966750741004944
+    - 0.06934373825788498
+    position:
+    - -2.0 foot
+    - 55.0 foot
+    - 5.5 foot
+    speed: 82.0 mph
+    spin: 2200 revolutions_per_minute
+    spin_direction:
+    - 1.0027633905410767
+    - -0.042927466332912445
+    - 0.20645293593406677
+  simulation:
+    error tolerance: 0.10 dimensionless
+    time step: 1 ms
+- launch:
+    direction:
+    - 0.03009282425045967
+    - -0.9985073208808899
+    - 0.04557978734374046
+    position:
+    - -2.0 foot
+    - 55.0 foot
+    - 5.5 foot
+    speed: 82.0 mph
+    spin: 2200 revolutions_per_minute
+    spin_direction:
+    - 1.002280831336975
+    - -0.06061477214097977
+    - 0.20435011386871338
+  simulation:
+    error tolerance: 0.10 dimensionless
+    time step: 1 ms

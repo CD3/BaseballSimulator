@@ -1,0 +1,7 @@
+pitcher:
+  name: adam
+training:
+  training data file: ./data/training/adam-training-data-100000-8c9bddf417b66faf0f2cf459e4321a751a8c2a59.pl
+  input model file: "{name}-model-{id}.pl"
+  output model file: "{name}-model-{id}.pl"
+  number epochs: 10000000
