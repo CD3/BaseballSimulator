@@ -258,7 +258,7 @@ def test_freefall_with_drag():
   assert trajectory[-1][6] <  0
 
   assert Approx(trajectory[-1][6]) == v(dt)
-  assert Approx(trajectory[-1][3]).epsilon(0.25) == x(dt) # the analytic solution may not be quite rite here
+  assert Approx(trajectory[-1][3]).epsilon(0.25) == x(dt) # the analytic solution may not be quite right here
   
 
 def test_magnus_only():
