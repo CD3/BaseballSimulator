@@ -1,6 +1,7 @@
 
 
-from BaseballSimulator import *
+from BaseballSimulator.Simulator import *
+from BaseballSimulator.Pitchers import *
 from BaseballSimulator.Plotter import *
 import plotly.graph_objs as go
 import pytest
@@ -512,8 +513,8 @@ def test_pitcher_train():
   adam.aim_model.save(str(model_file))
 
 
-  fig = go.Figure(data=go.Scatter(x=list(range(len(losses))),y=losses,mode='markers') )
-  fig.show()
+  # fig = go.Figure(data=go.Scatter(x=list(range(len(losses))),y=losses,mode='markers') )
+  # fig.show()
 
 
 
@@ -542,8 +543,8 @@ def test_pitcher_train():
   azs = [ r[1].to("in").magnitude for r in locations ]
 
 
-  fig = go.Figure(data=[go.Scatter(x=txs,y=tzs,mode='markers'),go.Scatter(x=axs,y=azs,mode='markers')])
-  fig.show()
+  # fig = go.Figure(data=[go.Scatter(x=txs,y=tzs,mode='markers'),go.Scatter(x=axs,y=azs,mode='markers')])
+  # fig.show()
 
   total_loss = 0
   dl = 0
