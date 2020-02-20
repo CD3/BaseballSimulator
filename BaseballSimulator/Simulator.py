@@ -167,6 +167,24 @@ class Simulation:
     return err
 
   def run(self, launch_config, terminate_function = lambda record : len(record) > 1000, record_all=True):
+    '''
+    Takes a launch configuration, runs a simulation, and returns the trajectory.
+
+    Trajectory is a list of state tensors. I.e, given
+
+    trajecotry = sim.run(launch_config)
+
+    trajectory will be a list. trajectory[0] will be the initial state of the projectile, trajectory[-1] will be the final state.
+
+    Each state tensor contains 10 elements
+
+    state[0]    contains time
+    state[1:4]  contains cartesian coordinates
+    state[4:7]  contains cartesian components of velocity vector
+    state[7:10] contains cartesian components of spin (angular velocity) vector
+
+    State quantities are expressed in SI BASE UNITS.
+    '''
 
     state = torch.zeros( [self.state_size] )
     state[0] = 0
