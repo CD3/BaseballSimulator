@@ -1,0 +1,22 @@
+pitcher: &ptchr
+  name: jon
+  aim_model: null
+  characteristics:
+    release position: ['-2 ft', '55 ft', '5.5 ft']
+    pitches:
+      1:
+        velocity: 96 mph
+        spin: 2400 rpm
+        spin direction: [-2, 0.1, -1]
+
+simulation: &sim
+  time step: 1 ms
+  error tolerance : 0.10 dimensionless
+
+configurations:
+  - simulation: *sim
+    pitcher: *ptchr
+    pitch:
+      type: 1
+      effort: 100 percent
+      direction: ['0 degree', '0 degree']
