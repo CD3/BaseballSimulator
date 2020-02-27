@@ -26,11 +26,11 @@ def load_data(file="temp_data.csv"):
     return training_set
 
 
-def train(fitter, init_pos, final_pos, epochs=5000, learning_rate=0.1):
+def train(fitter, init_pos, final_pos, epochs=5000, learning_rate=0.01):
     loss_func = torch.nn.MSELoss()
     optimizer = torch.optim.SGD(fitter.parameters(),lr=learning_rate)
 
-    print('initial parameters')
+    print('INITIAL PARAMETERS')
     for p in fitter.parameters():
         print(p)
 
@@ -41,7 +41,7 @@ def train(fitter, init_pos, final_pos, epochs=5000, learning_rate=0.1):
         optimizer.step()
         optimizer.zero_grad()
 
-    print('\nfinal parameters')
+    print('\nFINAL PARAMETERS')
     for p in fitter.parameters():
         print(p)
 
@@ -92,12 +92,12 @@ testing_data = load_data() # ideally, this dataset would be a different one
 
 print("~~~~~Linear~~~~~")
 fit1 = HitModels.LinearFit()
-train(fit1, data[0], data[1])
-acc = test(fit1, testing_data[0], testing_data[1])
-print('final error = '+str(acc)+" %")
+train(fit1, data[0], data[1], learning_rate=0.001)
+err = test(fit1, testing_data[0], testing_data[1])
+print('final error = '+str(err)+" %")
 
 print("\n~~~~~NN~~~~~")
 fit2 = HitModels.TwoLayerNet(20)
-train(fit2, data[0], data[1])
-acc = test(fit2, testing_data[0], testing_data[1])
-print('final error = '+str(acc)+" %")
+train(fit2, data[0], data[1], epochs=5000, learning_rate=0.001)
+err = test(fit2, testing_data[0], testing_data[1])
+print('final error = '+str(err)+" %")
