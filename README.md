@@ -9,5 +9,5 @@ It is still being developed to test new ideas.
 
 ## Authors
 
-The physics implemented in `BaseballSimulator` was written by two undergraduate students, June Jung and Richardwhitehill. The
+The physics implemented in `BaseballSimulator` was written by two undergraduate students, June Jung and Richard Whitehill. The
 original code was rewritten to provide a cleaner API by C.D. Clark III. 
