@@ -15,10 +15,10 @@ setup(
         'click',
         'tqdm',
     ],
-    entry_points='''
-    [console_scripts]
-     launch-sim=BaseballSimulator.scripts.launch_sim:main
-     pitch-sim=BaseballSimulator.scripts.pitch_sim:main
-     pitch-trainer=BaseballSimulator.scripts.pitch_trainer:main
-    ''',
+    # entry_points='''
+    # [console_scripts]
+    #  launch-sim=BaseballSimulator.scripts.launch_sim:main
+    #  pitch-sim=BaseballSimulator.scripts.pitch_sim:main
+    #  pitch-trainer=BaseballSimulator.scripts.pitch_trainer:main
+    # ''',
 )
