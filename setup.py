@@ -6,7 +6,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'pint',
-        'torch==1.3.0',
+        'torch',
         'plotly',
         'pyyaml',
         'numpy',
