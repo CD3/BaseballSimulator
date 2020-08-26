@@ -1,3 +1,7 @@
 *.pyc
 *.swp
 *.vscode
+testenv/
+_*/
+dist/
+*.egg-info/

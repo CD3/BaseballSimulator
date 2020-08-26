@@ -1,7 +1,7 @@
-from .Simulator import *
-from .Plotter import *
-from . import Pitchers
-from .pdict import *
+from BaseballSimulator.Simulator import *
+from BaseballSimulator.Plotter import *
+from BaseballSimulator import Pitchers
+from BaseballSimulator.pdict import *
 
 from pathos.multiprocessing import ProcessingPool as Pool
 import yaml
@@ -9,6 +9,8 @@ import sys
 import pprint
 import importlib
 import copy
+
+import click
 
 this_script = pathlib.Path(__file__).resolve()
 
@@ -57,26 +59,12 @@ def construct_pitcher(config):
 
   return pitcher
 
-def main(argv):
-
-  parser = ArgumentParser(description="A baseball pitch simulator.")
-
-  parser.add_argument("config_file",
-                      action="store",
-                      help="Configuration file." )
-  parser.add_argument("-l", "--list-pitchers",
-                      action="store_true",
-                      help="List the name of all built-in pitcher available for use." )
-  parser.add_argument("-o", "--output-config-file",
-                      action="store",
-                      default="launch-sim-autoconfig.yaml",
-                      help="Name of file to write launch-sim.py configuration file to." )
-  parser.add_argument("-r", "--run-launch-sim",
-                      action="store_true",
-                      help="Run launch-sim.py after generating configuration." )
-
-
-  args = parser.parse_args(argv)
+@click.command("A baseball pitch simulator.")
+@click.argument("config_file")
+@click.option("--list-pitchers","-l",is_flag=True,help="List the name of all built-in pitcher available for use.")
+@click.option("--output-config-file","-o",help="Name of file to write launch-sim.py configuration file to.")
+@click.option("--run-launch-sim","-r",help="Run launch-sim.py after generating configuration.")
+def main(config_file,list_pitchers,output_config_file,run_launch_sim):
 
   if args.list_pitchers:
     pitchers = [ p for p in dir(Pitchers) if isinstance( getattr(Pitchers,p), Pitchers.Pitcher ) ]
@@ -128,5 +116,5 @@ def main(argv):
 
 
 if __name__ == "__main__":
-  main(sys.argv[1:])
+  main()
 

@@ -1,62 +1,23 @@
-from .Simulator import *
-from .Plotter import *
-from .pdict import *
+from BaseballSimulator.Simulator import *
+from BaseballSimulator.Plotter import *
+from BaseballSimulator.pdict import *
 
 from pathos.multiprocessing import ProcessingPool as Pool
 import yaml
 import sys
 import importlib
 
-# import ray
-# ray.init()
+import click
 
-from argparse import ArgumentParser
-
-def main(argv):
-
-  parser = ArgumentParser(description="A projectile motion simulator..")
-
-  parser.add_argument("config_file",
-                      action="store",
-                      help="Configuration file." )
-
-  parser.add_argument("-w", "--write-to-file",
-                      dest="write_to_file",
-                      action="store_true",
-                      help="Write trajectories to file." )
-
-  parser.add_argument("-o", "--output-file",
-                      dest="output_file",
-                      action="store",
-                      default="Trajectory",
-                      help="Output file basename. Multiple simulations will be written to seprate files with index appended." )
-                      
-  parser.add_argument("-f", "--output-format",
-                      dest="output_format",
-                      action="store",
-                      default="txt",
-                      help="Output file format." )
-
-  parser.add_argument("-p", "--display-plots",
-                      dest="display_plots",
-                      action="store_true",
-                      help="Plot trajectories." )
-
-  parser.add_argument("-t", "--terminate",
-                      dest="terminate",
-                      action="store",
-                      default="terminate.py",
-                      help="Specify python file containing 'terminate' function to be used." )
-
-  parser.add_argument("-s", "--serial",
-                      dest="serial",
-                      action="store_true",
-                      help="Run simulations in series rather than parallel." )
-
-
-  args = parser.parse_args(argv)
-
-
+@click.command(help="A projectile motion simulator.")
+@click.argument("config_file")
+@click.option("--write-to-file","-w",is_flag=True,help="Write trajectories to file.")
+@click.option("--output-file","-o",help="Output file basename. Multiple simulations will be written to seprate files with index appended.")
+@click.option("--output-format","-f",default="txt",help="Output file format.")
+@click.option("--display-plots","-p",is_flag=True,help="Generate and display plot of trajectories.")
+@click.option("--terminate","-t",help="Specify python file containing 'terminate' function to be used.")
+@click.option("--serial","-s",is_flag=True,help="Run simulations in series rather than parallel.")
+def main(config_file,write_to_file,output_file,output_format,display_plots,terminate,serial):
 
   def load_configs_from_file(filename):
     configs = []
@@ -71,15 +32,13 @@ def main(argv):
 
     return configs
 
-
-
-  configs = load_configs_from_file(args.config_file)
+  configs = load_configs_from_file(config_file)
 
   # @ray.remote
   def run_configuration(sim_and_launch):
     try:
-      if args.terminate:
-        file = pathlib.Path(args.terminate).resolve()
+      if terminate:
+        file = pathlib.Path(terminate).resolve()
         path = file.parent
         name = file.stem
         term = importlib.import_module(name)
@@ -104,7 +63,7 @@ def main(argv):
 
     return sim_and_launch[0].run( sim_and_launch[1], terminate )
 
-  if args.serial:
+  if serial:
     trajectories = [ run_configuration(c) for c in configs ]
   else:
     processes = Pool()
@@ -112,23 +71,23 @@ def main(argv):
     # trajectories = ray.get( [run_configuration.remote(c) for c in configs] )
 
 
-  if args.write_to_file:
+  if write_to_file:
     for i,trajectory in enumerate(trajectories):
-      if args.output_format == 'txt':
-        with open(f"{args.output_file}-{i}.txt", 'w') as f:
+      if output_format == 'txt':
+        with open(f"{output_file}-{i}.txt", 'w') as f:
           f.write("#t x y z vx vy vz wx wy wz")
           f.write("\n")
           for state in trajectory:
             line = " ".join( [str(elem.item()) for elem in state] )
             f.write(line)
             f.write("\n")
-      elif args.output_format == 'pt':
-        torch.save( torch.stack(trajectory), f"{args.output_file}-{i}.pt")
+      elif output_format == 'pt':
+        torch.save( torch.stack(trajectory), f"{output_file}-{i}.pt")
 
       else:
-        raise Exception(f"Error: Unrecognized output file format ({args.output_format})")
+        raise Exception(f"Error: Unrecognized output file format ({output_format})")
 
-  if args.display_plots:
+  if display_plots:
     plotter = Trajectory3DPlot()
     # add stikezone graphic
     W = Q_(17,'inch').to("m")
@@ -167,4 +126,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-  main(sys.argv[1:])
+  main()
