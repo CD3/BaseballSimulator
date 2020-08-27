@@ -3,6 +3,8 @@ from setuptools import setup, find_packages
 setup(
     name='BaseballSimulator',
     version = '0.1',
+    description="A module simulating the flight of a basebal, including deflection caused by spin.",
+    url="https://github.com/CD3/BaseballSimulator",
     packages=find_packages(),
     install_requires=[
         'pint',

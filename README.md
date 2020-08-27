@@ -14,7 +14,11 @@ original code was rewritten to provide a cleaner API by C.D. Clark III.
 
 # Installing
 
-To come...
+`BaseballSimulator` is available on PyPi.
+
+```bash
+$ pip install baseballsimulator
+```
 
 # Usage
 
